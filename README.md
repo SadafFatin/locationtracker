@@ -14,6 +14,9 @@ npx cap sync
 <docgen-index>
 
 * [`echo(...)`](#echo)
+* [`trackLocation(...)`](#tracklocation)
+* [`stopTrackingLocation()`](#stoptrackinglocation)
+* [Interfaces](#interfaces)
 
 </docgen-index>
 
@@ -33,5 +36,49 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
 --------------------
+
+
+### trackLocation(...)
+
+```typescript
+trackLocation(options: WatchOptions, callback: (position?: any, error?: CallbackError | undefined) => void) => Promise<string>
+```
+
+| Param          | Type                                                                                         |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| **`options`**  | <code><a href="#watchoptions">WatchOptions</a></code>                                        |
+| **`callback`** | <code>(position?: any, error?: <a href="#callbackerror">CallbackError</a>) =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;string&gt;</code>
+
+--------------------
+
+
+### stopTrackingLocation()
+
+```typescript
+stopTrackingLocation() => Promise<{ value: any; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: any; }&gt;</code>
+
+--------------------
+
+
+### Interfaces
+
+
+#### WatchOptions
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`baseUrl`** | <code>string</code> |
+
+
+#### CallbackError
+
+| Prop       | Type                |
+| ---------- | ------------------- |
+| **`code`** | <code>string</code> |
 
 </docgen-api>

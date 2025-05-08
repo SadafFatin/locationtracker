@@ -1,2 +1,37 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Android SDK 34+ additionally requires the FOREGROUND_SERVICE_LOCATION
+    runtime permission to start a foreground service of type "location". -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <!-- Android SDK 33+ requires the POST_NOTIFICATIONS runtime permission to
+    display the foreground service notification. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-feature android:name="android.hardware.location.gps" />
+
+
+    <application>
+        <service
+            android:name="com.location.tracker.LocationTrackerService"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            android:process=":locationTrackerServiceProcess"
+             />
+        <receiver android:name=".LocationBroadcaster"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.location.tracker.LocationTrackerService.stopTracking" />
+                <action android:name="com.location.tracker.LocationTrackerService.broadcast" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+
+
+
+
 </manifest>

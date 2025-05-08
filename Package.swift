@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Location_tracker",
-    platforms: [.iOS(.v14)],
+    platforms: [.iOS(.v13)],
     products: [
         .library(
             name: "Location_tracker",

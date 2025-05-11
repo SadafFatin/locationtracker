@@ -12,6 +12,8 @@ export class LocationTrackerWeb extends WebPlugin implements LocationTrackerPlug
 
 
   trackLocation(options: WatchOptions,callback: (position?: Location, error?: CallbackError) => void): Promise<any> {
+    
+    console.log(callback, options)
     return new Promise((resolve) => {
       navigator.geolocation.getCurrentPosition((position) => {
         resolve({ value: position });

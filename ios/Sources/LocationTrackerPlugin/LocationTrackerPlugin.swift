@@ -9,7 +9,7 @@ import Capacitor
 @objc(LocationTrackerPlugin)
 public class LocationTrackerPlugin: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
     public let identifier = "LocationTrackerPlugin"
-    public let jsName = "LocationTracker";
+    public let jsName = "LocationTrackerPlugin";
     private let implementation = LocationTracker()
     public enum NotificationType{
         case  START_TRACKING,STOP_TRACKING,UPDATE_TRACKING

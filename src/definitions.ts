@@ -18,12 +18,7 @@ export interface LocationTrackerPlugin {
   ) => void
   ): Promise<string>;
 
-
-
-
   stopTrackingLocation(): Promise<{ value: any }>;
-
-
 
 }
 

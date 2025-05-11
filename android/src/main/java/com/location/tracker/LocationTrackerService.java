@@ -53,7 +53,7 @@ public class LocationTrackerService extends Service {
         createNotificationChannel();
         startForeground(100, createNotification());
         LocationRequest locationRequest = new LocationRequest
-                .Builder(12000)
+                .Builder(120000)
                 .setMaxUpdateDelayMillis(5000)
                 .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setWaitForAccurateLocation(true).build();

@@ -81,4 +81,27 @@ stopTrackingLocation() => Promise<{ value: any; }>
 | ---------- | ------------------- |
 | **`code`** | <code>string</code> |
 
+
+### Implementation 
+```typescript
+
+import { registerPlugin} from "@capacitor/core";
+
+const LocationTrackerPlugin: any = registerPlugin("LocationTrackerPlugin");
+export  function trackLocation(baseUrl,callback) {
+  LocationTrackerPlugin.trackLocation(
+    {baseUrl: baseUrl},
+    function (location:any) {
+      console.log('watcher callback function:  ', location);
+      callback(location);
+    }
+  );
+}
+
+export function stopTrackingLocation() {
+  LocationTrackerPlugin.stopTrackingLocation();
+}
+
+```
+
 </docgen-api>

@@ -1,7 +1,5 @@
 package com.location.tracker;
 
-import static androidx.core.content.ContextCompat.registerReceiver;
-
 import static com.location.tracker.LocationTrackerService.getCancelIntent;
 
 import android.Manifest;
@@ -15,8 +13,6 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
@@ -29,8 +25,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONObject;
-
-import java.util.Objects;
 
 
 @CapacitorPlugin(
@@ -50,11 +44,12 @@ public class LocationTrackerPlugin extends Plugin {
 
     private static final int REQUEST_LOCATION = 1000;
     public static final String BASE_URL = "BASE_URL";
+    public static final String DATA = "DATA";
+
     public static final String BASE_URL_KEY = "baseUrl";
+    public static final String CALL_DATA_KEY = "data";
     private final LocationTracker implementation = new LocationTracker();
     private final LocationTrackerService locationTrackerService = null;
-
-
 
     @PluginMethod
     public void echo(PluginCall call) {
@@ -111,8 +106,11 @@ public class LocationTrackerPlugin extends Plugin {
 
         Log.d(this.getClass().toString(),  "Registered Broadcast Listener with CBID: "+call.getCallbackId());
 
+
         Intent intent = new Intent(bridge.getContext(),LocationTrackerService.class);
         intent.putExtra(BASE_URL, call.getString(BASE_URL_KEY));
+        intent.putExtra(DATA,  call.getObject(CALL_DATA_KEY).toString() );
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             bridge.getActivity().startForegroundService(intent);
@@ -178,10 +176,12 @@ public class LocationTrackerPlugin extends Plugin {
         // hasAccuracy method? Better safe than sorry.
         obj.put("accuracy", location.hasAccuracy() ? location.getAccuracy() : JSONObject.NULL);
         obj.put("altitude", location.hasAltitude() ? location.getAltitude() : JSONObject.NULL);
-        if (location.hasVerticalAccuracy()) {
-            obj.put("altitudeAccuracy", location.getVerticalAccuracyMeters());
-        } else {
-            obj.put("altitudeAccuracy", JSONObject.NULL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (location.hasVerticalAccuracy()) {
+                obj.put("altitudeAccuracy", location.getVerticalAccuracyMeters());
+            } else {
+                obj.put("altitudeAccuracy", JSONObject.NULL);
+            }
         }
         // In addition to mocking locations in development, Android allows the
         // installation of apps which have the power to simulate location

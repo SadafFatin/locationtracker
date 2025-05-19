@@ -5,6 +5,7 @@ export interface CallbackError extends Error {
 
 export interface WatchOptions {
   baseUrl: string;
+  data: any
 }
 
 export interface LocationTrackerPlugin {

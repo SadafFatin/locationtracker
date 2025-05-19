@@ -73,6 +73,7 @@ stopTrackingLocation() => Promise<{ value: any; }>
 | Prop          | Type                |
 | ------------- | ------------------- |
 | **`baseUrl`** | <code>string</code> |
+| **`data`**    | <code>any</code>    |
 
 
 #### CallbackError
@@ -82,15 +83,19 @@ stopTrackingLocation() => Promise<{ value: any; }>
 | **`code`** | <code>string</code> |
 
 
-### Implementation 
-```typescript
 
+```typescript
 import { registerPlugin} from "@capacitor/core";
 
 const LocationTrackerPlugin: any = registerPlugin("LocationTrackerPlugin");
-export  function trackLocation(baseUrl,callback) {
+
+export  function trackLocation(baseUrl, data, callback) {
+  console.log(data);
   LocationTrackerPlugin.trackLocation(
-    {baseUrl: baseUrl},
+    {
+      baseUrl: baseUrl,
+      data: data
+    },
     function (location:any) {
       console.log('watcher callback function:  ', location);
       callback(location);
@@ -103,5 +108,6 @@ export function stopTrackingLocation() {
 }
 
 ```
+
 
 </docgen-api>

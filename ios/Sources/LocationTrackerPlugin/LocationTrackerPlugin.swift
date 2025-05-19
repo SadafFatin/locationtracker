@@ -18,6 +18,7 @@ public class LocationTrackerPlugin: CAPPlugin, CAPBridgedPlugin, CLLocationManag
     public final let NOTIFICATION_STOP_TRACKING_IDENTIFIER = "TRACKING_NOTIFICATION";
 
     public var baseUrl = "";
+    public var callData:JSObject =  JSObject();
     private var watchers = [Watcher]();
     
     public let pluginMethods: [CAPPluginMethod] = [
@@ -52,6 +53,11 @@ public class LocationTrackerPlugin: CAPPlugin, CAPBridgedPlugin, CLLocationManag
             call.setValue("Tracking Loaction", forKey: "backgroundMessage");
         }
         
+        print("base Url: " , baseUrl);
+
+        callData = call.getObject("data") ?? JSObject();
+        print("call data: " , callData.values, callData.keys)
+
         // CLLocationManager requires main thread
         DispatchQueue.main.async {
             let background = call.getString("backgroundMessage") != nil
@@ -227,14 +233,22 @@ public class LocationTrackerPlugin: CAPPlugin, CAPBridgedPlugin, CLLocationManag
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let payload = ["latitude": lat, "longitude": lon]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload, options: [])
+        print("posting data to server: " , callData.values, callData.keys)
+
+        
+        callData.updateValue(String(lat), forKey: "lat");
+        callData.updateValue(String(lon), forKey: "lng");
+
+        print("posting data to server: " , callData.values, callData.keys)
+
+        //let payload = ["latitude": lat, "longitude": lon]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: callData, options: [])
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Post error: \(error)")
             } else {
-                print("Location posted: \(lat), \(lon)")
+                print("Location posted: \(String(describing: response?.url)), \(String(describing: response?.description))")
             }
         }.resume()
     }

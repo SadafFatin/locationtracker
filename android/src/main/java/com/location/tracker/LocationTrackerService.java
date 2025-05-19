@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
@@ -22,6 +23,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -43,6 +47,8 @@ public class LocationTrackerService extends Service {
     private LocationCallback locationCallback;
 
     private static String BASE_URL = "";
+
+    private static JSONObject CALL_DATA = new JSONObject();
 
 
     @Override
@@ -100,10 +106,13 @@ public class LocationTrackerService extends Service {
     private void createNotificationChannel() {
         NotificationChannel channel = null;
         NotificationManager manager = getSystemService(NotificationManager.class);
-        channel = new NotificationChannel(LOCATION_TRACKING_CHANNEL, "LocationTrackerService", NotificationManager.IMPORTANCE_HIGH);
-        if (manager != null) {
-            manager.createNotificationChannel(channel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channel = new NotificationChannel(LOCATION_TRACKING_CHANNEL, "LocationTrackerService", NotificationManager.IMPORTANCE_HIGH);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
         }
+
     }
 
     @Override
@@ -116,6 +125,14 @@ public class LocationTrackerService extends Service {
             return START_NOT_STICKY;
         }
         BASE_URL = Objects.requireNonNull(Objects.requireNonNull(intent.getExtras()).get("BASE_URL")).toString();
+        try {
+                String dataString = Objects.requireNonNull(intent.getExtras().getString("DATA"));
+                Log.d(LocationTrackerService.class.toString(),"Call Data: "+ dataString);
+                CALL_DATA = new JSONObject(dataString);
+        } catch (JSONException e) {
+               Log.d(LocationTrackerService.class.toString(),"Call Data: not found");
+        }
+
         return START_STICKY;
     }
 
@@ -142,16 +159,26 @@ public class LocationTrackerService extends Service {
                 URL url = new URL(BASE_URL);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
+
+
+                if(CALL_DATA == null){
+                    CALL_DATA = new JSONObject();
+                }
+
+
+                CALL_DATA.put("lat", String.format("%s", location.getLatitude()));
+                CALL_DATA.put("lng", String.format("%s", location.getLongitude()));
+                Log.d(LocationTrackerService.class.toString(),"CALL DATA: "+ CALL_DATA.toString());
+
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 conn.setDoOutput(true);
-                String json = String.format("{\"lat\": \"%s\", \"lng\": \"%s\"}", location.getLatitude(), location.getLongitude());
-
+                //String json = String.format("{\"lat\": \"%s\", \"lng\": \"%s\"}", location.getLatitude(), location.getLongitude());
                 try (OutputStream os = conn.getOutputStream()) {
-                    byte[] input = json.getBytes(StandardCharsets.UTF_8);
+                    byte[] input = CALL_DATA.toString().getBytes(StandardCharsets.UTF_8);
                     os.write(input, 0, input.length);
                 }
                 int responseCode = conn.getResponseCode();
-                Log.d(this.getClass().toString(), " response code: " + responseCode + " response message: " + conn.getResponseMessage() + "  req body: " + json);
+                Log.d(this.getClass().toString(), " response url: " +  conn.getURL() +" response code: " + responseCode + " response message: " + conn.getResponseMessage() + "  req body: " + CALL_DATA.toString());
                 conn.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();

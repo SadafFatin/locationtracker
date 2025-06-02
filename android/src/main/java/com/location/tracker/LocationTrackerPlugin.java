@@ -13,6 +13,8 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
@@ -101,8 +103,15 @@ public class LocationTrackerPlugin extends Plugin {
         IntentFilter filter = new IntentFilter(LocationTrackerService.ACTION_BROADCAST);
         IntentFilter filterStopTracking = new IntentFilter(LocationTrackerService.ACTION_STOP_SERVICE);
 
-        bridge.getActivity().registerReceiver(locationBroadcaster, filter);
-        bridge.getActivity().registerReceiver(locationBroadcaster, filterStopTracking);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            bridge.getActivity().registerReceiver(locationBroadcaster, filter, Context.RECEIVER_NOT_EXPORTED);
+            bridge.getActivity().registerReceiver(locationBroadcaster, filterStopTracking, Context.RECEIVER_NOT_EXPORTED);
+        }
+        else{
+            bridge.getActivity().registerReceiver(locationBroadcaster, filterStopTracking);
+            bridge.getActivity().registerReceiver(locationBroadcaster, filterStopTracking);
+        }
 
         Log.d(this.getClass().toString(),  "Registered Broadcast Listener with CBID: "+call.getCallbackId());
 

@@ -117,7 +117,13 @@ public class LocationTrackerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (ACTION_STOP_SERVICE.equals(Objects.requireNonNull(intent).getAction())) {
+        if (intent == null) {
+            return START_STICKY;
+        }
+
+        String action = intent.getAction();
+
+        if (ACTION_STOP_SERVICE.equals(action)) {
             Log.d(LocationTrackerService.class.toString(), "onStartCommand():");
             Intent bcIntent = new Intent(ACTION_STOP_SERVICE);
             getApplicationContext().sendBroadcast(bcIntent);

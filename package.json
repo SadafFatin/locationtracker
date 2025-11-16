@@ -1,6 +1,6 @@
 {
   "name": "location--tracker",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Tracking User Location by Background Service",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",

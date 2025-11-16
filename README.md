@@ -1,6 +1,6 @@
 # location--tracker
 
-Tracking User Location by Background Service
+Tracking User Location by Background Service in Android and IOS applications and send them to the server async. 
 
 ## Install
 
